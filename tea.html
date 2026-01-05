@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coffee & Tea Vending System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ab644c 0%, #dea26d 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 30px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .section h2 {
+            color: #692e07;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        button {
+            padding: 20px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+        }
+
+        .tea-btn {
+            background: linear-gradient(135deg, #a98a77 0%, #9e7357 100%);
+        }
+
+        .coffee-btn {
+            background: linear-gradient(135deg, #5d2b05 0%, #00f2fe 100%);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .info-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .info-item label {
+            display: block;
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .info-item .value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .stock-low {
+            color: #e74c3c !important;
+        }
+
+        .profit-positive {
+            color: #27ae60 !important;
+        }
+
+        .message {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: 600;
+            display: none;
+        }
+
+        .message.error {
+            background: #ffebee;
+            color: #c62828;
+            display: block;
+        }
+
+        .message.success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            display: block;
+        }
+
+        .sales-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .summary-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .summary-card h3 {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+
+        .summary-card .amount {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>☕ Coffee & Tea Vending System</h1>
+
+        <div class="section">
+            <h2>Sell Drinks</h2>
+            <div class="buttons">
+                <button class="tea-btn" onclick="sellDrink('tea', true)">Tea with Sugar</button>
+                <button class="tea-btn" onclick="sellDrink('tea', false)">Tea without Sugar</button>
+                <button class="coffee-btn" onclick="sellDrink('coffee', true)">Coffee with Sugar</button>
+                <button class="coffee-btn" onclick="sellDrink('coffee', false)">Coffee without Sugar</button>
+            </div>
+            <div id="message" class="message"></div>
+        </div>
+
+        <div class="section">
+            <h2>Current Stock</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <label>Tea Powder (g)</label>
+                    <div class="value" id="teaStock">500</div>
+                </div>
+                <div class="info-item">
+                    <label>Coffee Powder (g)</label>
+                    <div class="value" id="coffeeStock">500</div>
+                </div>
+                <div class="info-item">
+                    <label>Sugar (g)</label>
+                    <div class="value" id="sugarStock">1000</div>
+                </div>
+                <div class="info-item">
+                    <label>Milk (ml)</label>
+                    <div class="value" id="milkStock">2000</div>
+                </div>
+                <div class="info-item">
+                    <label>Cups</label>
+                    <div class="value" id="cupsStock">100</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Sales Summary</h2>
+            <div class="sales-summary">
+                <div class="summary-card">
+                    <h3>Tea Cups Sold</h3>
+                    <div class="amount" id="teaSold">0</div>
+                </div>
+                <div class="summary-card">
+                    <h3>Coffee Cups Sold</h3>
+                    <div class="amount" id="coffeeSold">0</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Today's Business</h2>
+            <div class="sales-summary">
+                <div class="summary-card">
+                    <h3>Total Sales</h3>
+                    <div class="amount" id="totalSales">₹0</div>
+                </div>
+                <div class="summary-card">
+                    <h3>Total Cost</h3>
+                    <div class="amount" id="totalCost">₹0</div>
+                </div>
+                <div class="summary-card">
+                    <h3>Today's Profit</h3>
+                    <div class="amount profit-positive" id="totalProfit">₹0</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Stock
+        let stock = {
+            tea: 500,
+            coffee: 500,
+            sugar: 1000,
+            milk: 2000,
+            cups: 100
+        };
+
+        // Prices
+        const prices = {
+            tea: 10,
+            coffee: 15
+        };
+
+        // Making costs
+        const makingCosts = {
+            tea: 5,
+            coffee: 8
+        };
+
+        // Recipe requirements per cup
+        const recipes = {
+            tea: { tea: 5, milk: 50, sugar: 10, cups: 1 },
+            coffee: { coffee: 10, milk: 50, sugar: 10, cups: 1 }
+        };
+
+        // Sales tracking
+        let sales = {
+            teaSold: 0,
+            coffeeSold: 0,
+            totalRevenue: 0,
+            totalCost: 0
+        };
+
+        function checkStock(drink, withSugar) {
+            const recipe = recipes[drink];
+            
+            if (stock.cups < recipe.cups) return { success: false, item: 'cups' };
+            if (stock.milk < recipe.milk) return { success: false, item: 'milk' };
+            if (stock[drink] < recipe[drink]) return { success: false, item: drink + ' powder' };
+            if (withSugar && stock.sugar < recipe.sugar) return { success: false, item: 'sugar' };
+            
+            return { success: true };
+        }
+
+        function reduceStock(drink, withSugar) {
+            const recipe = recipes[drink];
+            
+            stock[drink] -= recipe[drink];
+            stock.milk -= recipe.milk;
+            stock.cups -= recipe.cups;
+            if (withSugar) {
+                stock.sugar -= recipe.sugar;
+            }
+        }
+
+        function sellDrink(drink, withSugar) {
+            const stockCheck = checkStock(drink, withSugar);
+            
+            if (!stockCheck.success) {
+                showMessage(`Sorry! Not enough ${stockCheck.item} in stock.`, 'error');
+                return;
+            }
+
+            // Reduce stock
+            reduceStock(drink, withSugar);
+
+            // Update sales
+            if (drink === 'tea') {
+                sales.teaSold++;
+            } else {
+                sales.coffeeSold++;
+            }
+
+            sales.totalRevenue += prices[drink];
+            sales.totalCost += makingCosts[drink];
+
+            // Show success
+            const drinkName = drink.charAt(0).toUpperCase() + drink.slice(1);
+            const sugarText = withSugar ? 'with sugar' : 'without sugar';
+            showMessage(`${drinkName} ${sugarText} sold successfully!`, 'success');
+
+            // Update display
+            updateDisplay();
+        }
+
+        function showMessage(text, type) {
+            const messageEl = document.getElementById('message');
+            messageEl.textContent = text;
+            messageEl.className = `message ${type}`;
+            
+            setTimeout(() => {
+                messageEl.className = 'message';
+            }, 3000);
+        }
+
+        function updateDisplay() {
+            // Update stock
+            document.getElementById('teaStock').textContent = stock.tea;
+            document.getElementById('coffeeStock').textContent = stock.coffee;
+            document.getElementById('sugarStock').textContent = stock.sugar;
+            document.getElementById('milkStock').textContent = stock.milk;
+            document.getElementById('cupsStock').textContent = stock.cups;
+
+            // Highlight low stock
+            for (let item in stock) {
+                const el = document.getElementById(item + 'Stock');
+                if (el) {
+                    if (stock[item] <= 100 && item !== 'sugar' && item !== 'milk') {
+                        el.classList.add('stock-low');
+                    } else if (stock[item] <= 200 && (item === 'sugar' || item === 'milk')) {
+                        el.classList.add('stock-low');
+                    } else {
+                        el.classList.remove('stock-low');
+                    }
+                }
+            }
+
+            // Update sales
+            document.getElementById('teaSold').textContent = sales.teaSold;
+            document.getElementById('coffeeSold').textContent = sales.coffeeSold;
+            document.getElementById('totalSales').textContent = '₹' + sales.totalRevenue;
+            document.getElementById('totalCost').textContent = '₹' + sales.totalCost;
+            
+            const profit = sales.totalRevenue - sales.totalCost;
+            document.getElementById('totalProfit').textContent = '₹' + profit;
+        }
+
+        // Initialize display
+        updateDisplay();
+    </script>
+</body>
+</html>
