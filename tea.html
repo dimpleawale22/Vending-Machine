@@ -248,25 +248,23 @@
             cups: 100
         };
 
-        // Prices
+    
         const prices = {
             tea: 10,
             coffee: 15
         };
 
-        // Making costs
+      
         const makingCosts = {
             tea: 5,
             coffee: 8
         };
-
-        // Recipe requirements per cup
+        
         const recipes = {
             tea: { tea: 5, milk: 50, sugar: 10, cups: 1 },
             coffee: { coffee: 10, milk: 50, sugar: 10, cups: 1 }
         };
 
-        // Sales tracking
         let sales = {
             teaSold: 0,
             coffeeSold: 0,
@@ -304,10 +302,8 @@
                 return;
             }
 
-            // Reduce stock
             reduceStock(drink, withSugar);
 
-            // Update sales
             if (drink === 'tea') {
                 sales.teaSold++;
             } else {
@@ -317,12 +313,10 @@
             sales.totalRevenue += prices[drink];
             sales.totalCost += makingCosts[drink];
 
-            // Show success
             const drinkName = drink.charAt(0).toUpperCase() + drink.slice(1);
             const sugarText = withSugar ? 'with sugar' : 'without sugar';
             showMessage(`${drinkName} ${sugarText} sold successfully!`, 'success');
 
-            // Update display
             updateDisplay();
         }
 
@@ -337,14 +331,13 @@
         }
 
         function updateDisplay() {
-            // Update stock
+            
             document.getElementById('teaStock').textContent = stock.tea;
             document.getElementById('coffeeStock').textContent = stock.coffee;
             document.getElementById('sugarStock').textContent = stock.sugar;
             document.getElementById('milkStock').textContent = stock.milk;
             document.getElementById('cupsStock').textContent = stock.cups;
 
-            // Highlight low stock
             for (let item in stock) {
                 const el = document.getElementById(item + 'Stock');
                 if (el) {
@@ -358,7 +351,6 @@
                 }
             }
 
-            // Update sales
             document.getElementById('teaSold').textContent = sales.teaSold;
             document.getElementById('coffeeSold').textContent = sales.coffeeSold;
             document.getElementById('totalSales').textContent = '₹' + sales.totalRevenue;
@@ -368,7 +360,6 @@
             document.getElementById('totalProfit').textContent = '₹' + profit;
         }
 
-        // Initialize display
         updateDisplay();
     </script>
 </body>
